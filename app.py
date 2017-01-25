@@ -19,7 +19,7 @@ from modules.greet import *
 from modules.url import *
 
 
-def text_message(msg_recieved, sender_id):
+def text_message(msg_recieved, sender_id , msg):
     print sender_id, msg_recieved
     msg_list = msg_recieved.split(' ')
 
