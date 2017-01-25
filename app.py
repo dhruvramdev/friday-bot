@@ -91,7 +91,7 @@ def text_message(msg_recieved, sender_id):
         if len(msg_list) != 1:
             text = ' '.join(msg_list[1:])
             send_msg = bug(text)
-            bot.sendMessage('269145190', "Bug Reported : " + text + '\nby' + str(sender_id))
+            bot.sendMessage('269145190', "Bug Reported : " + str(msg ) + '\n\nby' + str(sender_id))
 
         else:
             send_msg = "Usage : /bug <problem faced by you>"
@@ -100,7 +100,7 @@ def text_message(msg_recieved, sender_id):
         if len(msg_list) != 1:
             text = ' '.join(msg_list[1:])
             send_msg = suggestion(text)
-            bot.sendMessage('269145190', "Suggestion : " + text + '\nby' + str(sender_id))
+            bot.sendMessage('269145190', "Suggestion : " + str(msg) + '\n\nby' + str(sender_id))
 
         else:
             send_msg = "Usage : /suggest <suggestion>"
@@ -109,6 +109,10 @@ def text_message(msg_recieved, sender_id):
         send_msg = hello()
     elif msg_list[0].lower() in ['help']:
         send_msg = help()
+
+    elif msg_list[0].lower() in ['/rate']:
+        send_msg = rate()
+
 
     else:
         send_msg = "Unknown Command"
@@ -145,7 +149,7 @@ def handle(msg):
     msg_recieved = msg['text']
     content_type, chat_type, chat_id = telepot.glance(msg)
     if content_type == 'text':
-        text_message(msg_recieved, sender_id)
+        text_message(msg_recieved, sender_id , msg)
 
 
 TOKEN = os.environ['TOKEN']

@@ -12,6 +12,7 @@ What I can do...
 /wiki <keyword> for a searching keyword
 /song <songname> for sending song to you
 /ytd <link> for downloading youtube video video
+/rate for Rating Our Bot
 
 Wanna Report a Bug or send suggestions. Type
 /bug <description> to report bug.
@@ -24,6 +25,14 @@ Hello, This is Friday.
 How May I Help You!
 """
 
+rate_msg = """
+
+Rate Frdiay Bot By Clicking Below
+http://telegram.me/storebot?start=9m907k6gpuc
+
+"""
+
+
 def start():
     return welcome_msg
 
@@ -32,3 +41,6 @@ def hello():
 
 def help():
     return welcome_msg
+
+def rate():
+    return rate_msg

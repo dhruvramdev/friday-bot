@@ -1,12 +1,7 @@
-
-
-
 def bug(text):
     file = open('bugs.txt', 'a')
     file.write(text + ':::' + '\n')
     file.close()
-
-    
 
     return 'Thanks For Reporting The Bug'
 
@@ -16,7 +11,4 @@ def suggestion(text):
     file.write(text + ':::' + '\n')
     file.close()
 
-   
-
-
-    return 'Thanks For Suggesting'
+    return 'Thanks For Your Suggestion'
