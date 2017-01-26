@@ -1,5 +1,4 @@
 # friday-bot
-
 A Telegram Python Based Bot currently live on http://telegram.me/i_am_friday_bot . Open 
 ![ScreenShot](screenshots/1.png)
 
@@ -16,8 +15,10 @@ TODO
 - [x] Song Downloads
 - [x] Youtube Video Downloader
 - [x] WikiPedia Search Query
+- [x] News (By NEWSAPI )
 
 
+Needs Collabraotrs For Adding More Features
 
 
 Rate the Bot at https://storebot.me/bot/i_am_friday_bot
