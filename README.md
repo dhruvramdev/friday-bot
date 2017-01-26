@@ -1,9 +1,6 @@
 # friday-bot
 
-A Telegram Python Based Bot currently live on http://telegram.me/i_am_friday_bot . 
-
-
-
+A Telegram Python Based Bot currently live on http://telegram.me/i_am_friday_bot . Open 
 ![ScreenShot](screenshots/1.png)
 
 Open For Reviews and Suggestions .
