@@ -120,7 +120,8 @@ def text_message(msg_recieved, sender_id , msg):
         keyboardNews = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text='More News', callback_data="newsMore")]
         ])
-        bot.sendMessage(sender_id, 'Press Below  To Load More', reply_markup=keyboardNews)
+        bot.sendMessage(sender_id, 'Load More', reply_markup=keyboardNews)
+        send_msg = "Press Above To Load More News"
 
     else:
         if "thanks" in msg_list or "Thanks" in msg_list :
