@@ -27,7 +27,8 @@ How May I Help You!
 
 rate_msg = """
 
-Rate Frdiay Bot By Clicking Below
+Rate Friday Bot By Clicking Below
+:-)
 http://telegram.me/storebot?start=i_am_friday_bot
 
 

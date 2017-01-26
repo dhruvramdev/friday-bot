@@ -17,7 +17,7 @@ from modules.jokes import *
 from modules.feedback import *
 from modules.greet import *
 from modules.url import *
-
+from modules.news import *
 
 def text_message(msg_recieved, sender_id , msg):
     print sender_id, msg_recieved
@@ -113,9 +113,20 @@ def text_message(msg_recieved, sender_id , msg):
     elif msg_list[0].lower() in ['/rate']:
         send_msg = rate()
 
+    elif msg_list[0].lower() in ['/news'] :
+        response = getNews()
+        for i in range(2):
+            bot.sendMessage(sender_id , response[i] )
+        keyboardNews = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='More News', callback_data="newsMore")]
+        ])
+        bot.sendMessage(sender_id, 'Press Below  To Load More', reply_markup=keyboardNews)
 
     else:
-        send_msg = "Unknown Command"
+        if "thanks" in msg_list or "Thanks" in msg_list :
+            send_msg = "Welcome ,  Show Your Support By Rating Our Bot \n Type /rate to know more"
+        else :
+            send_msg = "Unknown Command"
 
     bot.sendMessage(sender_id, send_msg)
 
@@ -139,9 +150,15 @@ def download_send_audio(sender_id, song_link):
 def on_callback_query(msg):
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
     print('Callback Query:', query_id, from_id, query_data)
-    bot.answerCallbackQuery(query_id, text='Got Your Request ! \n Sending File')
-    bot.sendMessage(from_id, 'Got Your Request ! \n Sending File')
-    download_send_audio(from_id, query_data)
+    if query_data == "newsMore" :
+        bot.answerCallbackQuery(query_id, text='Loading More News')
+        response = getNews()
+        for i in range(2, len(response)) :
+            bot.sendMessage(from_id , response[i] )
+            bot.answerCallbackQuery(query_id, text='Got Your Request ! \n Sending File')
+    else :
+        bot.sendMessage(from_id, 'Got Your Request ! \n Sending File')
+        download_send_audio(from_id, query_data)
 
 
 def handle(msg):
@@ -154,7 +171,7 @@ def handle(msg):
 
 TOKEN = os.environ['TOKEN']
 PORT = int(sys.argv[2])
-URL =  os.environ['URL']
+URL =  os.environ['URL'] #"https://ded974f2.ngrok.io/verify"
 
 app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
