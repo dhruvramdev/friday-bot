@@ -204,7 +204,7 @@ def handle(msg):
 
 TOKEN = os.environ['TOKEN']
 PORT = int(sys.argv[2])
-URL =  "https://89509e2e.ngrok.io/verify" #os.environ['URL'] 
+URL =  os.environ['URL'] 
 
 app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
@@ -221,4 +221,4 @@ def pass_update():
 
 if __name__ == '__main__':
     bot.setWebhook(URL)
-    app.run(debug=True)
+    app.run(port = PORT ,debug=True)
