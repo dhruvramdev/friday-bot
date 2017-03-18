@@ -1,2 +1,2 @@
-web: gunicorn maintain:app $PORT
+web: gunicorn app:app $PORT
  

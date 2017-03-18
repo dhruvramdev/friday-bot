@@ -1,5 +1,4 @@
 import telepot
-import sys
 import random
 import os
 from flask import Flask, request
@@ -19,9 +18,14 @@ from modules.greet import *
 from modules.url import *
 from modules.news import *
 
+
+
 def text_message(msg_recieved, sender_id , msg):
     print sender_id, msg_recieved
+    username = msg['from']['username']
     msg_list = msg_recieved.split(' ')
+    telegram_url = "http://www.telegram.me/"
+    
 
     if msg_list[0] == '/start':
         send_msg = start()
@@ -44,14 +48,14 @@ def text_message(msg_recieved, sender_id , msg):
             longUrl = msg_list[1]
             send_msg = "Shortened Url : " + shortUrl(longUrl)
          else :
-             send_msg = "URL Not Provided \nUsage : /shorten <URL>"
+             send_msg = "URL Not Provided \nUsage : /shorten URL"
 
     elif msg_list[0].lower() == '/expand':
         if len(msg_list) != 1:
             longUrl = msg_list[1]
             send_msg = "Expaned Url : " + expandUrl(longUrl)
         else:
-            send_msg = "URL Not Provided \nUsage : /expand <shortURL>"
+            send_msg = "URL Not Provided \nUsage : /expand shortURL"
 
 
     elif msg_list[0].lower() == '/meme':
@@ -85,25 +89,25 @@ def text_message(msg_recieved, sender_id , msg):
             video.close()
 
         else:
-            send_msg = "Video Link Not Given \nUsage: /ytd <video link>"
+            send_msg = "Video Link Not Given \nUsage: /ytd Link"
 
     elif msg_list[0].lower() in ['/bugs', '/bug']:
         if len(msg_list) != 1:
             text = ' '.join(msg_list[1:])
             send_msg = bug(text)
-            bot.sendMessage('269145190', "Bug Reported : " + str(msg ) + '\n\nby' + str(sender_id))
+            bot.sendMessage('269145190', "Bug Reported : " + str(msg ) + '\n\nby   ' + str(telegram_url + username))
 
         else:
-            send_msg = "Usage : /bug <problem faced by you>"
+            send_msg = "Usage : /bug Problem"
 
     elif msg_list[0].lower() in ['/suggest']:
         if len(msg_list) != 1:
             text = ' '.join(msg_list[1:])
             send_msg = suggestion(text)
-            bot.sendMessage('269145190', "Suggestion : " + str(msg) + '\n\nby' + str(sender_id))
+            bot.sendMessage('269145190', "Suggestion : " + str(msg) + '\n\nby   ' + str(telegram_url + username))
 
         else:
-            send_msg = "Usage : /suggest <suggestion>"
+            send_msg = "Usage : /suggest Suggestion"
 
     elif msg_list[0].lower() in ['hi', 'hello', 'hey']:
         send_msg = hello()
@@ -112,7 +116,14 @@ def text_message(msg_recieved, sender_id , msg):
 
     elif msg_list[0].lower() in ['/rate']:
         send_msg = rate()
-
+    
+    elif msg_list[0].lower() in ['/contact']:
+        if len(msg_list) > 1 :
+            text = ' '.join(msg_list[1:])
+            send_msg = "Message Sent to BotMaster , He will contact you soon."
+            bot.sendMessage("269145190" , "New Message From " + str(telegram_url + username) + " \n Meesage :- " + text)
+        else :
+            send_msg = "Usage : to send message to Bot Master \n/contact MESSAGE "
     elif msg_list[0].lower() in ['/news'] :
         response = getNews()
         for i in range(2):
@@ -122,7 +133,7 @@ def text_message(msg_recieved, sender_id , msg):
         ])
         bot.sendMessage(sender_id, 'Load More', reply_markup=keyboardNews)
         send_msg = "Press Above To Load More News"
-
+     
     else:
         if "thanks" in msg_list or "Thanks" in msg_list :
             send_msg = "Welcome ,  Show Your Support By Rating Our Bot \n Type /rate to know more"
@@ -130,7 +141,24 @@ def text_message(msg_recieved, sender_id , msg):
             send_msg = "Unknown Command"
 
     bot.sendMessage(sender_id, send_msg)
-
+    
+    check_user(username)
+    
+    
+def check_user(username) :
+    telegram_url = "http://www.telegram.me/"
+    file = open("user.txt" , "r")
+    users =file.readlines()
+    file.close()
+    print users
+    if username + '\n' not in users :
+        bot.sendMessage("269145190" , "New User Operated")
+        bot.sendMessage('269145190' , telegram_url + username )
+        users.append(username + '\n')
+    file = open("user.txt" , "w")
+    file.writelines(users)
+    file.close()
+    
 
 def send_download_keyboard(sender_id, song_names):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -154,9 +182,13 @@ def on_callback_query(msg):
     if query_data == "newsMore" :
         bot.answerCallbackQuery(query_id, text='Loading More News')
         response = getNews()
-        for i in range(2, len(response)) :
-            bot.sendMessage(from_id , response[i] )
-            bot.answerCallbackQuery(query_id, text='Got Your Request ! \n Sending File')
+        for i in range(1) :
+            number = random.randint(2,len(response))
+            bot.sendMessage(from_id , response[number] )
+        keyboardNews = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='More News', callback_data="newsMore")]
+        ])
+        bot.sendMessage(from_id, 'Load More', reply_markup=keyboardNews)
     else :
         bot.sendMessage(from_id, 'Got Your Request ! \n Sending File')
         download_send_audio(from_id, query_data)
@@ -172,7 +204,7 @@ def handle(msg):
 
 TOKEN = os.environ['TOKEN']
 PORT = int(sys.argv[2])
-URL =  os.environ['URL'] #"https://ded974f2.ngrok.io/verify"
+URL =  "https://89509e2e.ngrok.io/verify" #os.environ['URL'] 
 
 app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
@@ -189,4 +221,4 @@ def pass_update():
 
 if __name__ == '__main__':
     bot.setWebhook(URL)
-    app.run(port=PORT , debug=True)
+    app.run(debug=True)

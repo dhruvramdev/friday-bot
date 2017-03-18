@@ -7,16 +7,17 @@ What I can do...
 /meme for a random meme
 /flip for flipping a coin
 /quote for a random Quote
-/shorten <url> for shortening a URL
-/expand <shortUrl> for expanding a URL
-/wiki <keyword> for a searching keyword
-/song <songname> for sending song to you
-/ytd <link> for downloading youtube video video
+/shorten URL for shortening a URL
+/expand SHORTURL for expanding a URL
+/wiki KEYWORD for a searching keyword
+/song SONGNAME for sending song to you
+/ytd LINK for downloading youtube video video
 /rate for Rating Our Bot
+/contact MESSAGE to send message to Bot Master
 
 Wanna Report a Bug or send suggestions. Type
-/bug <description> to report bug.
-/suggest <suggestion> to suggest anything.
+/bug DESCRIPTION to report bug.
+/suggest SUGGESTION to suggest anything.
 
 """
 
@@ -46,3 +47,8 @@ def help():
 
 def rate():
     return rate_msg
+    
+    
+    
+    
+    

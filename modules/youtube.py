@@ -31,7 +31,7 @@ def download_song(link):
 
 
 
-    song_name = os.path.abspath('~')[:-1] + 'songs\\' + song_name  + '.mp3'
+    song_name = os.path.abspath('~')[:-1] + 'songs/' + song_name  + '.mp3'
     if os.path.isfile(song_name):
         return song_name
 
@@ -63,7 +63,9 @@ def download_video(yt_link):
             if i in string.ascii_letters + '()-_ ':
                 video_name += i
 
-        video_name = os.path.abspath('~')[:-1] + 'videos\\' + video_name + '.mp4'
+        video_name = os.path.abspath('~')[:-1] + 'videos/' + video_name + '.mp4'
+        if os.path.isfile(video_name):
+            return video_name
         res = requests.get(download_link)
         file = open(video_name, 'wb')
 
