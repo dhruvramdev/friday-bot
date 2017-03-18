@@ -52,7 +52,7 @@ app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
 update_queue = Queue()  # channel between `app` and `bot`
 
-bot.message_loop({'chat': handle, 'callback_query': on_callback_query}, source=update_queue)
+bot.message_loop({'chat': handle}, source=update_queue)
 
 
 @app.route('/verify', methods=['GET', 'POST'])
