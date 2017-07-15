@@ -31,7 +31,7 @@ def text_message(msg_recieved, sender_id , msg):
         send_msg = start()
 
     elif msg_list[0] == '/tellMeTotalUsers' :
-        if msg_list[1] == os.environ['FRIDAY_SECREY'] :
+        if msg_list[1] == os.environ['FRIDAY_SECRET'] :
             if sender_id != 269145190 :
                 send_msg = "You are not allowed to access this"
                 bot.sendMessage('269145190', 'Some New My Secret! Fuck')
