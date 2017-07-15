@@ -2,6 +2,7 @@ import telepot
 import random
 import os
 from flask import Flask, request
+from pymongo import MongoClient
 
 try:
     from Queue import Queue
@@ -25,10 +26,19 @@ def text_message(msg_recieved, sender_id , msg):
     username = msg['from']['username']
     msg_list = msg_recieved.split(' ')
     telegram_url = "http://www.telegram.me/"
-    
 
     if msg_list[0] == '/start':
         send_msg = start()
+
+    elif msg_list[0] == '/tellMeTotalUsers' :
+        if msg_list[1] == os.environ['FRIDAY_SECREY'] :
+            if sender_id != 269145190 :
+                send_msg = "You are not allowed to access this"
+                bot.sendMessage('269145190', 'Some New My Secret! Fuck')
+            else :
+                send_msg =  db.users.count()
+            # bot.sendMessage('269145190' , db.users.count())
+
 
     elif msg_list[0].lower() == '/wiki':
         send_msg = find_wiki(msg_list)
@@ -142,23 +152,44 @@ def text_message(msg_recieved, sender_id , msg):
 
     bot.sendMessage(sender_id, send_msg)
     
-    check_user(username)
+    check_user(username, sender_id)
     
     
-def check_user(username) :
+def check_user(username, id) :
     telegram_url = "http://www.telegram.me/"
-    file = open("user.txt" , "r")
-    users =file.readlines()
-    file.close()
-    print users
-    if username + '\n' not in users :
+    result = db.users.find_one({'sender_id':id})
+    count = None
+    print result
+    if result :
+        count = result['count']
+        db.users.update_one({'sender_id':id} ,
+                            {
+                                "$set": {
+                                    "count": result['count'] + 1
+                                }
+                            })
+    else :
+        count = 1
+        db.users.insert({'username':username , 'count' :1 , 'sender_id' : id })
         bot.sendMessage("269145190" , "New User Operated")
         bot.sendMessage('269145190' , telegram_url + username )
-        users.append(username + '\n')
-    file = open("user.txt" , "w")
-    file.writelines(users)
-    file.close()
-    
+
+    # bot.sendMessage('269145190' , count)
+
+
+    # telegram_url = "http://www.telegram.me/"
+    # file = open("user.txt" , "r")
+    # users =file.readlines()
+    # file.close()
+    # print users
+    # if username + '\n' not in users :
+    #     bot.sendMessage("269145190" , "New User Operated")
+    #     bot.sendMessage('269145190' , telegram_url + username )
+    #     users.append(username + '\n')
+    # file = open("user.txt" , "w")
+    # file.writelines(users)
+    # file.close()
+
 
 def send_download_keyboard(sender_id, song_names):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -204,7 +235,11 @@ def handle(msg):
 
 TOKEN = os.environ['TOKEN']
 PORT = int(sys.argv[2])
-URL =  os.environ['URL'] 
+URL =  os.environ['URL'] #"https://b33f0647.ngrok.io/verify"
+
+
+client = MongoClient(os.environ['MLABFRIDAYURL'])
+db = client.friday
 
 app = Flask(__name__)
 bot = telepot.Bot(TOKEN)
@@ -215,9 +250,12 @@ bot.message_loop({'chat': handle, 'callback_query': on_callback_query}, source=u
 
 @app.route('/verify', methods=['GET', 'POST'])
 def pass_update():
-    update_queue.put(request.data)  # pass update to bot
-    return 'OK'
-
+    try :
+        update_queue.put(request.data)  # pass update to bot
+        return 'OK'
+    except Exception as e :
+        print e
+        bot.sendMessage('Error Occured' , request.data['chat']['id'])
 
 if __name__ == '__main__':
     bot.setWebhook(URL)
