@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as BS
 import requests
 import os
 import string
+import traceback
 
 
 def find_song(query):
@@ -52,7 +53,8 @@ def download_video(yt_link):
 
         res = requests.get(link)
         soup = BS(res.text, 'html.parser')
-        elem = soup.find('a', {'id': 'downloadMP4'})
+        elem = soup.find('a', {'class': 'downloadButtons btn btn-lg btn-block btn-success borderBottom'})
+        print elem
         download_link = 'http://youtubeinmp4.com/' + elem['href']
         print(download_link)
 
@@ -75,5 +77,6 @@ def download_video(yt_link):
         file.close()
         return video_name
     except Exception as e:
+        print traceback.print_exc()
         print(e , 'exception')
-        return None
+        raise RuntimeError
