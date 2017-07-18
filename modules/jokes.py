@@ -1,9 +1,9 @@
 import requests , random
 from bs4 import BeautifulSoup as BS
-
+import random
 
 def randomJoke():
-    jokeUrl = "http://www.santabanta.com/jokes/"
+    jokeUrl = "http://www.santabanta.com/jokes/?page=" + str(random.randint(1, 1050))
 
     res = requests.get(jokeUrl)
     soup = BS(res.text, 'html.parser')
