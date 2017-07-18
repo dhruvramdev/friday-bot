@@ -6,14 +6,15 @@ Open For Reviews and Suggestions .
 
 TODO 
 
+- [ ] Integrate with NLP 
 - [x] Flip a Coin
 - [x] Shorten URL
 - [x] Expand URL
 - [x] Random Quote
 - [x] Random Joke
 - [x] Random Meme (Needs Improvements)
-- [x] Song Downloads
-- [x] Youtube Video Downloader
+- [x] Song Downloads 
+- [x] Youtube Video Downloader with name and link
 - [x] WikiPedia Search Query
 - [x] News (By NEWSAPI )
 
