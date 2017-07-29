@@ -1,6 +1,5 @@
 import requests , random
 from bs4 import BeautifulSoup as BS
-import random
 
 def randomJoke():
     jokeUrl = "http://www.santabanta.com/jokes/?page=" + str(random.randint(1, 1050))

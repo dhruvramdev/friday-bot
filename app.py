@@ -16,11 +16,12 @@ from modules.feedback import *
 from modules.greet import *
 from modules.url import *
 from modules.news import *
+from modules.lyrics import *
 
 
 def text_message(msg_recieved, sender_id, msg):
     print sender_id, msg_recieved
-    username = msg['from']['username']
+    username = msg['from'].get('username')
     msg_list = msg_recieved.split(' ')
     telegram_url = "http://www.telegram.me/"
 
@@ -83,6 +84,19 @@ def text_message(msg_recieved, sender_id, msg):
 
             send_download_keyboard(sender_id, song_names)
             send_msg = 'Choose Song To Download'
+
+    elif msg_list[0].lower() in ['/lyric', '/lyrics']:
+        if len(msg_list) == 1:
+            send_msg = "Songname Not Given"
+        else:
+            songs = searchLyrics('+'.join(msg_list[1:]))
+            links = []
+            for song in songs:
+                bot.sendMessage(sender_id, song['name'] + ' by ' + song['singer'] )
+                links.append(song['link'])
+
+            send_download_keyboard(sender_id, links, 'lyrics')
+            send_msg = 'Choose Song To Download Lyrics'
 
     elif msg_list[0].lower() in ['/video']:
         if len(msg_list) == 1:
@@ -182,37 +196,25 @@ def check_user(username, id):
         bot.sendMessage("269145190", "New User Operated")
         bot.sendMessage('269145190', telegram_url + username)
 
-        # bot.sendMessage('269145190' , count)
 
+def send_download_keyboard(sender_id, links, type_of_link='song'):
+    
+    # Inline Keyboard QueryData Can't be reater than 64 Bytes 
+ 
+    mapping = {
+        0 : '1st' , 1 : '2nd'  , 2 : '3rd' , 3 : '4th' , 4 : '5th'
+    }
 
-        # telegram_url = "http://www.telegram.me/"
-        # file = open("user.txt" , "r")
-        # users =file.readlines()
-        # file.close()
-        # print users
-        # if username + '\n' not in users :
-        #     bot.sendMessage("269145190" , "New User Operated")
-        #     bot.sendMessage('269145190' , telegram_url + username )
-        #     users.append(username + '\n')
-        # file = open("user.txt" , "w")
-        # file.writelines(users)
-        # file.close()
+    inline_keyboard = [] 
 
-
-def send_download_keyboard(sender_id, song_names, type='Song'):
-    if type == 'Song':
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text='Donwload 1st Option', callback_data=song_names[0])],
-            [InlineKeyboardButton(text='Donwload 2nd Option', callback_data=song_names[1])],
-            [InlineKeyboardButton(text='Donwload 3rd Option', callback_data=song_names[2])],
-        ])
-    else:
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text='Donwload 1st Option', callback_data=song_names[0] + " video")],
-            [InlineKeyboardButton(text='Donwload 2nd Option', callback_data=song_names[1] + " video")],
-            [InlineKeyboardButton(text='Donwload 3rd Option', callback_data=song_names[2] + " video")],
-        ])
-
+    for i in range(len(links)) : 
+        url = links[i]
+        if type_of_link == 'lyrics' : 
+            url = '/'.join(url.split('/')[-2:])
+        button = InlineKeyboardButton(text='Donwload '+ mapping[i] +' Option', callback_data=str(url) + " " + type_of_link)
+        inline_keyboard.append([button])
+        
+    keyboard = InlineKeyboardMarkup( inline_keyboard = inline_keyboard)
     bot.sendMessage(sender_id, 'Use inline keyboard', reply_markup=keyboard)
 
 
@@ -222,11 +224,14 @@ def download_send_audio(sender_id, song_link):
     bot.sendAudio(sender_id, song)
     song.close()
 
+def download_send_lyrics(sender_id, link):
+    link = "http://www.azlyrics.com/lyrics/" + link
+    lyrics = getLyrics(link)
+    bot.sendMessage(sender_id , lyrics)
 
 def download_send_video(sender_id, video_link):
-    print video_link.split(' ')[0]
-
-    video_name = download_video(video_link.split(' ')[0])
+    print video_link
+    video_name = download_video(video_link)
     video = open(video_name, 'rb')
     bot.sendVideo(sender_id, video)
     video.close()
@@ -241,18 +246,24 @@ def on_callback_query(msg):
         for i in range(1):
             number = random.randint(2, len(response))
             bot.sendMessage(from_id, response[number])
+        
         keyboardNews = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text='More News', callback_data="newsMore")]
         ])
         bot.sendMessage(from_id, 'Load More', reply_markup=keyboardNews)
-    else:
-        if query_data.split(' ')[-1] == 'video':
-            bot.sendMessage(from_id, 'Got Your Request ! \n Sending File')
-            download_send_video(from_id, query_data)
 
-        else:
-            bot.sendMessage(from_id, 'Got Your Request ! \n Sending File')
-            download_send_audio(from_id, query_data)
+    else:
+        type_of_link = query_data.split(' ')[-1]
+        link = query_data.split(' ')[0]
+
+        mapping = {
+            'song' : download_send_audio,
+            'video' : download_send_video, 
+            'lyrics' : download_send_lyrics
+        }
+
+        bot.sendMessage(from_id, 'Got Your Request! \n Sending...')
+        mapping[type_of_link](from_id, link)
 
 
 def handle(msg):
@@ -265,7 +276,7 @@ def handle(msg):
 
 TOKEN = os.environ['TOKEN']
 PORT = int(sys.argv[2])
-URL =  os.environ['URL'] #"https://80827c22.ngrok.io/verify"
+URL =  os.environ['URL']
 client = MongoClient(os.environ['MLABFRIDAYURL'])
 db = client.friday
 
