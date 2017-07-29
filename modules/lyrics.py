@@ -18,7 +18,7 @@ def searchLyrics(searchString):
         a = a[1:6]
     for element in a :
 
-        print element
+        # print element
 
         name  = element.select('a')[0].text
         link  = element.select('a')[0]['href']

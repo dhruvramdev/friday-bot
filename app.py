@@ -1,6 +1,7 @@
 import telepot
 from flask import Flask, request
 from pymongo import MongoClient
+import traceback
 
 try:
     from Queue import Queue
@@ -100,6 +101,7 @@ def text_message(msg_recieved, sender_id, msg):
                 send_msg = 'Choose Song To Download Lyrics'
 
             except Exception as e :
+                traceback.print_exc()
                 print str(e)
                 send_msg = "Lyrics Not Found. Try Another Song."
             
@@ -217,7 +219,10 @@ def send_download_keyboard(sender_id, links, type_of_link='song'):
         url = links[i]
         if type_of_link == 'lyrics' : 
             url = '/'.join(url.split('/')[-2:])
-        button = InlineKeyboardButton(text='Donwload '+ mapping[i] +' Option', callback_data=str(url) + " " + type_of_link)
+        if len(str(url) + " " + type_of_link) > 64 : 
+            button = InlineKeyboardButton(text='Error Occured in This Query', callback_data="None")
+        else :
+            button = InlineKeyboardButton(text='Donwload '+ mapping[i] +' Option', callback_data=str(url) + " " + type_of_link)
         inline_keyboard.append([button])
         
     keyboard = InlineKeyboardMarkup( inline_keyboard = inline_keyboard)
@@ -268,8 +273,12 @@ def on_callback_query(msg):
             'lyrics' : download_send_lyrics
         }
 
-        bot.sendMessage(from_id, 'Got Your Request! \n Sending...')
-        mapping[type_of_link](from_id, link)
+
+        if type_of_link not in mapping :
+            bot.sendMessage(from_id, 'Cant Download This One, Try Others')
+        else:
+            bot.sendMessage(from_id, 'Got Your Request! \n Sending...')
+            mapping[type_of_link](from_id, link)
 
 
 def handle(msg):
