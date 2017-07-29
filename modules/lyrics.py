@@ -14,7 +14,12 @@ def searchLyrics(searchString):
     result = result[-1]
 
     a = result.select('tr')[:-1]
+    if len(a) > 5 :
+        a = a[1:6]
     for element in a :
+
+        print element
+
         name  = element.select('a')[0].text
         link  = element.select('a')[0]['href']
         singer = element.select('b')[1].text
