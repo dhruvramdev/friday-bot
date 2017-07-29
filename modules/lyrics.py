@@ -13,7 +13,7 @@ def searchLyrics(searchString):
     # print result
     result = result[-1]
 
-    a = result.select('tr')[:5]
+    a = result.select('tr')[:-1]
     for element in a :
         name  = element.select('a')[0].text
         link  = element.select('a')[0]['href']

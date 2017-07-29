@@ -89,14 +89,20 @@ def text_message(msg_recieved, sender_id, msg):
         if len(msg_list) == 1:
             send_msg = "Songname Not Given"
         else:
-            songs = searchLyrics('+'.join(msg_list[1:]))
-            links = []
-            for song in songs:
-                bot.sendMessage(sender_id, song['name'] + ' by ' + song['singer'] )
-                links.append(song['link'])
+            try :
+                songs = searchLyrics('+'.join(msg_list[1:]))                
+                links = []
+                for song in songs:
+                    bot.sendMessage(sender_id, song['name'] + ' by ' + song['singer'] )
+                    links.append(song['link'])
+                
+                send_download_keyboard(sender_id, links, 'lyrics')
+                send_msg = 'Choose Song To Download Lyrics'
 
-            send_download_keyboard(sender_id, links, 'lyrics')
-            send_msg = 'Choose Song To Download Lyrics'
+            except Exception as e :
+                print str(e)
+                send_msg = "Lyrics Not Found. Try Another Song."
+            
 
     elif msg_list[0].lower() in ['/video']:
         if len(msg_list) == 1:
