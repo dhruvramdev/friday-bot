@@ -19,7 +19,7 @@ TODO
 - [x] News (By NEWSAPI )
 
 
-Needs Collabraotrs For Adding More Features
+Needs Collaborators For Adding More Features
 
 
 Rate the Bot at https://storebot.me/bot/i_am_friday_bot
